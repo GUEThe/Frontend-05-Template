@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light</title>
+    <style>
+        .light {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background-color: black;
+            border-radius: 50px;
+        }
+
+        .number {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            font-size: 50px;
+            vertical-align: middle;
+            line-height: 100px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="light" id="light"></div>
+    <div id="number" class="number"></div>
+</body>
+<script type="text/javascript">
+
+    let lightDiv = document.getElementById('light')
+    let numberDiv = document.getElementById('number')
+
+
+    let lightArr = [{ color: "green", time: 10 }, { color: "yellow", time: 2 }, { color: "red", time: 5 }]
+    let curLight = 0
+    let time=lightArr[curLight].time
+    lightDiv.style.backgroundColor = lightArr[curLight].color
+    numberDiv.innerHTML = time
+
+    function changeLight(){
+        curLight = curLight + 1 > 2 ? 0 : curLight + 1
+        lightDiv.style.backgroundColor = lightArr[curLight].color
+        time=lightArr[curLight].time
+        numberDiv.innerHTML = time
+    }
+    
+    setInterval(()=>{
+        time--
+        numberDiv.innerHTML = time
+        if(time<0){
+            changeLight()
+        }
+    },1000)
+
+
+</script>
+
+</html>
