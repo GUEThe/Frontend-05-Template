@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>启发式搜索1</title>
+    <style>
+        .cell {
+            width: 6px;
+            height: 6px;
+            border-bottom: 1px solid white;
+            border-right: 1px solid white;
+            background-color: gray;
+        }
+
+        #container {
+            width: 701px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+    <button onclick="localStorage['map'] = JSON.stringify(map)">Save</button>
+</body>
+<script>
+
+    class Sorted {
+        constructor(data, compare) {
+            this.data = data.slice()
+            this.compare = compare || ((a, b) => a - b)
+        }
+
+        take() {
+            if (!this.data.length)
+                return
+            let min = this.data[0]
+            let minIndex = 0
+            for (let i = 1; i < this.data.length; i++) {
+                if (this.compare(this.data[i], min) < 0) {
+                    min = this.data[i]
+                    minIndex = i
+                }
+            }
+            this.data[minIndex] = this.data[this.data.length - 1]
+            this.data.pop()
+            return min
+        }
+
+        give(v) {
+            this.data.push(v)
+        }
+
+        get length() {
+            return this.data.length
+        }
+    }
+
+    let map = localStorage['map'] ? JSON.parse(localStorage['map']) : Array(10000).fill(0)
+    let container = document.getElementById('container')
+
+    for (let y = 0; y < 100; y++) {
+        for (let x = 0; x < 100; x++) {
+            let cell = document.createElement('div');
+            cell.classList.add('cell')
+            if (map[100 * y + x] === 1) {
+                cell.style.backgroundColor = "black"
+            }
+            cell.addEventListener('mousemove', () => {
+                if (mousedown) {
+                    if (clear) {
+                        map[100 * y + x] = ''
+                        cell.style.backgroundColor = "gray"
+                    } else {
+                        map[100 * y + x] = 1
+                        cell.style.backgroundColor = "black"
+
+                    }
+                }
+            })
+            container.appendChild(cell)
+        }
+    }
+
+    let mousedown = false
+    let clear = false
+
+    document.addEventListener("mousedown", (e) => {
+        mousedown = true
+        clear = e.which === 3
+    })
+
+    document.addEventListener("mouseup", (e) => {
+        mousedown = false
+    })
+
+    document.addEventListener('contextmenu', e => e.preventDefault())
+
+    function sleep(t) {
+        return new Promise(function (resolve) {
+            setTimeout(resolve, t)
+        })
+    }
+
+    async function findPath(map, start, end) {
+        let queue = [start]
+        let table = Object.create(map)
+
+        async function insert(x, y, pre) {
+            if (x < 0 || x >= 100 || y < 0 || y >= 100) {
+                return
+            }
+            if (table[100 * y + x]) {
+                return
+            }
+            table[100 * y + x] = pre
+            container.children[100 * y + x].style.backgroundColor = "lightgreen"
+            // await sleep(10)
+
+            queue.push([x, y])
+        }
+
+        while (queue.length) {
+            let [x, y] = queue.shift()
+
+            // console.log(x, y)
+            if (x === end[0] && y === end[1]) {
+                let path = []
+                while (x != start[0] || y != start[1]) {
+                    // ASI机制，（和[前面要加分号
+                    path.push(table[100 * y + x]);
+                    [x, y] = table[100 * y + x]
+                    await sleep(10)
+                    container.children[100 * y + x].style.backgroundColor = "purple"
+                }
+                return path
+            }
+            await insert(x - 1, y, [x, y])
+            await insert(x, y + 1, [x, y])
+            await insert(x, y - 1, [x, y])
+            await insert(x + 1, y, [x, y])
+
+            await insert(x + 1, y + 1, [x, y])
+            await insert(x - 1, y + 1, [x, y])
+            await insert(x - 1, y - 1, [x, y])
+            await insert(x + 1, y - 1, [x, y])
+
+
+
+
+
+        }
+        return null
+    }
+
+</script>
+
+</html>
