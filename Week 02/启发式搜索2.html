@@ -67,7 +67,7 @@
         }
 
         parent(i) {
-            return i / 2
+            return Math.floor(i / 2)
         }
 
         left(i) {
@@ -78,6 +78,10 @@
             return i * 2 + 1
         }
 
+        isLess(i, j) {
+            return this.compare(this.data[i], this.data[j]) < 0
+        }
+
         swap(i, j) {
             let temp = this.data[i]
             this.data[i] = this.data[j]
@@ -86,7 +90,7 @@
         // 上浮 i
         swim(i) {
             while (this.data[this.parent(i)]) {
-                if (this.compare(this.data[i], this.data[this.parent(i)]) < 0) {
+                if (this.isLess(i, this.parent(i))) {
                     this.swap(i, this.parent(i))
                     i = this.parent(i)
                 } else {
@@ -100,8 +104,8 @@
             while (this.data[this.left(i)]) {
                 let min = this.left(i)
                 if (this.data[this.right[i]])
-                    min = this.compare(this.data[this.right(i)], this.data[min]) < 0 ? this.right(i) : min
-                if (this.compare(this.data[min], this.data[i]) > 0)
+                    min = this.isLess(this.right(i), min) ? this.right(i) : min
+                if (this.isLess(min, i) > 0)
                     break;
                 this.swap(i, min)
                 i = min
@@ -109,6 +113,9 @@
         }
 
         take() {
+            if(this.length===0){
+                return
+            }
             this.swap(1, this.length)
             let v = this.data.pop()
             this.sink(1)
@@ -217,11 +224,6 @@
             await insert(x - 1, y + 1, [x, y])
             await insert(x - 1, y - 1, [x, y])
             await insert(x + 1, y - 1, [x, y])
-
-
-
-
-
         }
         return null
     }
