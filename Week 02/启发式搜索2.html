@@ -60,34 +60,68 @@
         }
     }
 
-    class MSorted {
+    class BinaryHeap {
         constructor(data, compare) {
-            this.data =[data.length].concat(data.slice())
+            this.data = [0].concat(data.slice())
             this.compare = compare || ((a, b) => a - b)
         }
 
-        take() {
-            if (this.data[0]===1)
-                return
-            let min = this.data[0]
-            let minIndex = 0
-            for (let i = 1; i < this.data.length; i++) {
-                if (this.compare(this.data[i], min) < 0) {
-                    min = this.data[i]
-                    minIndex = i
+        parent(i) {
+            return i / 2
+        }
+
+        left(i) {
+            return i * 2
+        }
+
+        right(i) {
+            return i * 2 + 1
+        }
+
+        swap(i, j) {
+            let temp = this.data[i]
+            this.data[i] = this.data[j]
+            this.data[j] = temp
+        }
+        // 上浮 i
+        swim(i) {
+            while (this.data[this.parent(i)]) {
+                if (this.compare(this.data[i], this.data[this.parent(i)]) < 0) {
+                    this.swap(i, this.parent(i))
+                    i = this.parent(i)
+                } else {
+                    break
                 }
             }
-            this.data[minIndex] = this.data[this.data.length - 1]
-            this.data.pop()
-            return min
+        }
+
+        // 下沉 i
+        sink(i) {
+            while (this.data[this.left(i)]) {
+                let min = this.left(i)
+                if (this.data[this.right[i]])
+                    min = this.compare(this.data[this.right(i)], this.data[min]) < 0 ? this.right(i) : min
+                if (this.compare(this.data[min], this.data[i]) > 0)
+                    break;
+                this.swap(i, min)
+                i = min
+            }
+        }
+
+        take() {
+            this.swap(1, this.length)
+            let v = this.data.pop()
+            this.sink(1)
+            return v
         }
 
         give(v) {
             this.data.push(v)
+            this.swim(this.length)
         }
 
         get length() {
-            return this.data[0]
+            return this.data.length - 1
         }
     }
 
@@ -138,7 +172,7 @@
     }
 
     async function findPath(map, start, end) {
-        let queue = new Sorted([start], (a, b) => distance(a) - distance(b))
+        let queue = new BinaryHeap([start], (a, b) => distance(a) - distance(b))
         let table = Object.create(map)
 
 
