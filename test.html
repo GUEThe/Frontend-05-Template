@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    function TreeNode(val) {
+        this.val = val;
+        this.left = this.right = null;
+    }
+    // 先根遍历和中根遍历建二叉树
+    var buildTree = function (preorder, inorder) {
+        if (preorder.length > 0 && inorder.length > 0) {
+            let val = preorder.shift();
+            let head = new TreeNode(val)
+            let rootIndex = inorder.indexOf(val)
+
+            if (rootIndex > 0) {
+                head.left = buildTree(preorder, inorder.slice(0, rootIndex))
+            }
+
+            if (inorder.length - rootIndex > 0) {
+                head.right = buildTree(preorder, inorder.slice(rootIndex+1, inorder.length))
+            }
+
+            return head
+        }
+        return null
+    };
+</script>
+
+</html>
