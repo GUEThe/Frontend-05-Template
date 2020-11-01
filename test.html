@@ -8,7 +8,7 @@
 </head>
 
 <body>
-
+    <button onclick="onBtn()">sss</button>
 </body>
 <script>
     function TreeNode(val) {
@@ -27,13 +27,168 @@
             }
 
             if (inorder.length - rootIndex > 0) {
-                head.right = buildTree(preorder, inorder.slice(rootIndex+1, inorder.length))
+                head.right = buildTree(preorder, inorder.slice(rootIndex + 1, inorder.length))
             }
 
             return head
         }
         return null
     };
+
+
+    let map = {}
+    var numWays = function (n) {
+        if (n === 1 || n === 2 || n === 0) {
+            map[n] = n;
+            return n === 0 ? 1 : map[n];
+        }
+        if (map[n]) {
+            return map[n]
+        }
+        map[n] = (numWays(n - 1) + numWays(n - 2)) % 1000000007
+        return map[n]
+    };
+
+    var minArray = function (numbers) {
+        if (numbers.length <= 1)
+            return numbers[numbers.length - 1]
+
+        let i = 0
+        for (; i < numbers.length; i++) {
+            if (numbers[i + 1] && (numbers[i] > numbers[i + 1])) {
+                return numbers[i + 1]
+            }
+        }
+        if (i === numbers.length)
+            return numbers[0]
+    };
+
+
+    /**
+  * @param {character[][]} board
+  * @param {string} word
+  * @return {boolean}
+  */
+    var exist = function (board, word) {
+
+        let dfs = function (board, word, x, y, k) {
+            if (x < 0 || y < 0 || x >= board.length || y >= board[0].length || board[x][y] !== word[k])
+                return false
+            if (k === word.length - 1)
+                return true
+            let temp = board[x][y]
+            board[x][y] = "%"
+            let res = dfs(board, word, x + 1, y, k + 1) || dfs(board, word, x - 1, y, k + 1) || dfs(board, word, x, y + 1, k + 1) || dfs(board, word, x, y - 1, k + 1)
+            board[x][y] = temp
+            return res
+        }
+
+        let bfs = function (board, word, x, y) {
+
+            let canGo = function (x, y, k) {
+                if (x < 0 || y < 0 || x >= board.length || y >= board[0].length || board[x][y] !== word[k])
+                    return false
+                return true
+            }
+
+
+            if (board[x][y] === word[0]) {
+                let queue = [[x, y]]
+                let k = 1;
+                let step = {};
+                step[`${x}${y}`] = true
+                while (queue.length) {
+                    let [x, y] = queue.shift()
+                    if (canGo(x + 1, y, k + 1) || canGo(x - 1, y, k + 1) || canGo(x, y + 1, k + 1) || canGo(x, y - 1, k + 1)) {
+                        queue.push([x, y])
+                    }
+                }
+            }
+            return false
+
+        }
+
+        for (let x = 0; x < board.length; x++) {
+            for (let y = 0; y < board[0].length; y++) {
+                if (dfs(board, word, x, y, 0)) return true
+            }
+        }
+        return false
+    };
+
+    var movingCount = function (m, n, k) {
+        let queue = [[0, 0]]
+        let res = 1
+        let visited = new Array(m);
+        for (let i = 0; i < m; i++) {
+            visited[i] = Array(n).fill(0);
+        }
+        visited[0][0] = true
+        let insert = function (x, y) {
+            if (x < 0 || y < 0 || x >= m || y >= n || Math.floor((x / 10 + x % 10 + y / 10 + y % 10)) > k || visited[x][y])
+                return
+            visited[x][y] = true
+            res = res + 1
+            queue.push([x, y])
+        }
+        while (queue.length) {
+            let [x, y] = queue.shift()
+            insert(x - 1, y)
+            insert(x + 1, y)
+            insert(x, y - 1)
+            insert(x, y + 1)
+        }
+        return res
+    };
+
+    var convert = function (s, numRows) {
+        let curRow = 0
+        let godown = true
+        let res = Array(numRows).fill('')
+        for (let char of s) {
+            res[curRow] += char
+            if (godown) {
+                godown = curRow + 1 < numRows
+                curRow = godown ? curRow + 1 : curRow - 1
+            } else {
+                godown = curRow - 1 < 0
+                curRow = godown ? curRow - 1 : curRow + 1
+            }
+
+        }
+        return res
+    };
+
+    // 巧用闭包
+    function debounce(func, wait = 50) {
+        let timer = 0
+        return function (...args) {
+            if (timer) clearTimeout(timer)
+            timer = setTimeout(() => {
+                func.apply(this, args)
+            }, wait)
+        }
+    }
+
+    var onBtn = debounce(() => console.log("sdfsfsdf"), 500)
+
+    function throttle(func, wait = 1000) {
+        let lastTime = null;
+        return function () {
+            let nowTime = +new Date()
+            if (nowTime - lastTime > wait || !lastTime) {
+                func()
+                lastTime = nowTime
+            }
+        }
+    }
+
+    let fn = () => {
+        console.log('boom')
+    }
+
+    // setInterval(throttle(fn, 1000), 10)
+
 </script>
 
 </html>
