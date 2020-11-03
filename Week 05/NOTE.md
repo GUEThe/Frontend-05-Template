@@ -40,3 +40,19 @@
         拦截 Proxy 实例作为函数调用的操作，比如proxy(...args)、proxy.call(object, ...args)、proxy.apply(...)。
     * construct(target, args)  
         拦截 Proxy 实例作为构造函数调用的操作，比如new proxy(...args)。
+
+## 简易 vue3.0 reactivity
+
+1. 原理
+
+   使用 es6 Proxy 对 Object 进行拦截，拦截 get 和 set 操作。set 的时候触发属性绑定的回调函数，get 的时候记录读取的属性。另外使用一个函数处理属性与回调函数的绑定关系。
+
+2. 具体实现
+
+   * 全局变量 callbacks 用于保存引用到属性的与其对应 callback；全局变量 usedReactivties 主要用于记录有 callback 使用到的对象的属性；reactivties 缓存 reactive 函数返回的 reactive proxy 对象。
+
+   * effect 函数传入一个 callback，首先执行一次 callback 获知使用到了哪些属性，将对应的属性与 callback 绑定，以供 set 属性的时候执行相应的callback。  
+
+   * reactive 函数传入一个对象，使用 proxy 对对象的 get 和 set 进行拦截。get 拦截将使用到的属性记录下来；set 拦截判断属性是否有 callback 调用，有则执行对应 callback 。  
+
+* [详见代码](./reactivity.html)
