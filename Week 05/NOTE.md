@@ -41,7 +41,7 @@
     * construct(target, args)  
         拦截 Proxy 实例作为构造函数调用的操作，比如new proxy(...args)。
 
-## 简易 vue3.0 reactivity
+## 简易 vue3.0 reactive
 
 1. 原理
 
@@ -55,4 +55,10 @@
 
    * reactive 函数传入一个对象，使用 proxy 对对象的 get 和 set 进行拦截。get 拦截将使用到的属性记录下来；set 拦截判断属性是否有 callback 调用，有则执行对应 callback 。  
 
-* [详见代码](./reactivity.html)
+   * [详见代码](./reactivity.html)
+
+## Range
+
+   表示一个包含节点与文本节点的一部分的文档片段。详细参考[理解HTML5中Range对象](https://www.cnblogs.com/tugenhua0707/p/7395966.html)和[MDN Range](https://developer.mozilla.org/zh-CN/docs/Web/API/Range)
+
+## 拖拽实现
