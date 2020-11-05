@@ -187,6 +187,22 @@
         console.log('boom')
     }
 
+    function isValid(s) {
+        // write code here
+        const stack = []
+        const sArr = s.split('');
+        stack.push(sArr.shift());
+        while (sArr.length) {
+            let temp = sArr.shift();
+            if ((stack[stack.length - 1] === "{" && temp === "}") || (stack[stack.length - 1] === "[" && temp === "]") || (stack[stack.length - 1] === "(" && temp === ")")) {
+                stack.pop()
+            } else {
+                stack.push(temp);
+            }
+        }
+        return stack.length === 0
+    }
+
     // setInterval(throttle(fn, 1000), 10)
 
 </script>

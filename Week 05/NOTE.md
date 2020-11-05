@@ -45,7 +45,7 @@
 
 1. 原理
 
-   使用 es6 Proxy 对 Object 进行拦截，拦截 get 和 set 操作。set 的时候触发属性绑定的回调函数，get 的时候记录读取的属性。另外使用一个函数处理属性与回调函数的绑定关系。
+    使用 es6 Proxy 对 Object 进行拦截，拦截 get 和 set 操作。set 的时候触发属性绑定的回调函数，get 的时候记录读取的属性。另外使用一个函数处理属性与回调函数的绑定关系。
 
 2. 具体实现
 
@@ -55,10 +55,20 @@
 
    * reactive 函数传入一个对象，使用 proxy 对对象的 get 和 set 进行拦截。get 拦截将使用到的属性记录下来；set 拦截判断属性是否有 callback 调用，有则执行对应 callback 。  
 
-   * [详见代码](./reactivity.html)
+   * [详见代码](./reactive.html)
 
 ## Range
 
    表示一个包含节点与文本节点的一部分的文档片段。详细参考[理解HTML5中Range对象](https://www.cnblogs.com/tugenhua0707/p/7395966.html)和[MDN Range](https://developer.mozilla.org/zh-CN/docs/Web/API/Range)
 
-## 拖拽实现
+## 拖动实现
+
+1. 原理  
+
+    使用 mousedown、mousemove 和 mouseup 组合，在需要拖动的块上监听 mousedown 事件，触发 mousedown 之后在 document 上监听 mousemove 和 mouseup 事件，mousemove 时移动滑块，mouseup 时保存上一次的未知同时取消 document 上对 mousemove 和 mouseup 事件的监听。 鼠标拖动时计算鼠标移动的距离与滑块上一次位置的距离之和，即为滑块滑动到的位置。鼠标移动的距离可通过 mousedown 时的位置和 mousemove 之后的位置计算。
+
+    这样做才是正确的做法，利用 flag 标志，然后在需要滑动的块上监听 mousemove 和 mouseup 存在 bug，当鼠标拖动太快需要滑动的块会监听不到 mousemove，当鼠标拖到浏览器窗口外松开时滑块也会监听不到 mouseup。
+
+2. 具体实现
+
+   [拖动代码](./dragable.html)

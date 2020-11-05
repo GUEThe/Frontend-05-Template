@@ -1,0 +1,116 @@
+<div id="container">
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+</div>
+<div id="dragable" style="display: inline-block;width: 100px;height: 100px;background-color: red;"></div>
+<script>
+    // mousedown、mousemove 和 mouseup 组合
+    // 不用 flag 标志选中，mousemove 和 mouseup 绑定到 document 上，
+    // 防止鼠标拖动太快导致监听不到 mousemove 事件，或鼠标拖出窗口外 mouseup 事件监听不到。
+    let dragable = document.getElementById('dragable')
+
+    // 可拖动块的上一次的位置(baseX,baseY)
+    let baseX = 0, baseY = 0;
+
+    // 禁止拖拽出浏览器窗口大小
+    let forbidden = (x, y) => {
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0
+        }
+
+        if (x + dragable.clientWidth > document.body.clientWidth) {
+            x = document.body.clientWidth - dragable.clientWidth
+        }
+        if (y + dragable.clientHeight > document.body.clientHeight) {
+            y = document.body.clientHeight - dragable.clientHeight
+        }
+        return [x, y]
+    }
+
+    dragable.addEventListener("mousedown", (event) => {
+
+        // 鼠标点击时的位置
+        let startX = event.clientX, startY = event.clientY
+
+        let mousemove = (event) => {
+            // baseX + event.clientX - startX 和 baseY + event.clientY - startY 拖动块移动的位置
+            // 移动的位置等于 初始位置(baseX,baseY) + 鼠标移动的距离(event.clientX - startX,event.clientY - startY )
+            // 不允许拖动超出浏览器窗口大小
+
+
+
+            // const [x, y] = forbidden(baseX + event.clientX - startX, baseY + event.clientY - startY)
+
+            // dragable.style.transform = `translate(${x}px, ${y}px)`
+
+            let range = getNearest(event.clientX, event.clientY)
+            console.log(range)
+            range.insertNode(dragable)
+        }
+
+        let mouseup = (event) => {
+
+            // 鼠标松开保存上一次位置
+            const [x, y] = forbidden(baseX + event.clientX - startX, baseY + event.clientY - startY)
+            baseX = x
+            baseY = y
+
+            document.removeEventListener("mousemove", mousemove)
+            document.removeEventListener("mouseup", mouseup)
+        }
+
+        document.addEventListener("mousemove", mousemove)
+        document.addEventListener("mouseup", mouseup)
+    })
+
+
+    let ranges = []
+    let container = document.getElementById('container')
+    for (let i = 0; i < container.firstChild.textContent.length; i++) {
+        let range = document.createRange()
+        range.setStart(container.firstChild, i)
+        range.setEnd(container.firstChild, i)
+        console.log(range.getBoundingClientRect())
+        ranges.push(range)
+    }
+
+    function getNearest(x, y) {
+        let min = Infinity
+        let nearest = null
+        ranges.forEach(item => {
+            let rect = item.getBoundingClientRect()
+            let distance = (rect.x - x) ** 2 + (rect.y - y) ** 2
+            if (distance < min) {
+                min = distance
+                nearest = item
+            }
+        })
+        return nearest
+    }
+
+    document.addEventListener("selectstart", e => e.preventDefault())
+
+</script>
