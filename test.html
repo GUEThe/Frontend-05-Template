@@ -243,6 +243,198 @@
         return result
     };
 
+    function staffCombinations(department_staff_dict, required_staff) {
+        //TODO your code goes here...
+
+        let MPickN = (source, n) => {
+            let list = [];
+            let zero = Array(source.length).fill(0);
+            for (let i = 0; i < n; i++) {
+                zero[i] = 1;
+            }
+            while (true) {
+                let subList = [];
+                for (let i = 0; i < source.length; i++) {
+                    if (zero[i] === 1) {
+                        subList.push(source[i]);
+                    }
+                }
+
+                list.push(subList);
+                let index = zero.join("").indexOf("10");
+                if (index === -1) break;
+
+                zero[index] = 0;
+                zero[index + 1] = 1;
+
+                let count = zero.slice(0, index).reduce((per, cur) => {
+                    if (cur === 1) return per + 1;
+                    return per;
+                }, 0);
+                for (let i = 0; i < index; i++) {
+                    if (i < count) {
+                        zero[i] = 1;
+                    } else {
+                        zero[i] = 0;
+                    }
+                }
+            }
+
+            return list;
+        };
+
+        let doConnect = (arr) => {
+            while (arr.length >= 2) {
+                let arr1 = arr.shift()
+                let arr2 = arr.shift()
+                let items = []
+                for (let i = 0; i < arr1.length; i++) {
+                    for (let j = 0; j < arr2.length; j++) {
+                        items.push(arr1[i].concat(arr2[j]).sort())
+                    }
+                }
+                arr.push(items)
+            }
+            return arr[0]
+        }
+
+        let arr = [];
+        for (let deptKey in required_staff) {
+            arr.push(MPickN(
+                department_staff_dict[deptKey],
+                required_staff[deptKey]
+            ));
+        }
+
+        return doConnect(arr);
+    }
+
+    function addStrings(num1, num2) {
+        //TODO your code goes here...
+        let nums1 = num1.split("");
+        let nums2 = num2.split("");
+        let diff = nums1.length - num2.length,
+            carry = 0;
+        if (diff < 0) {
+            for (let i = 0; i < -diff; i++) {
+                nums1.unshift("0");
+            }
+        }
+        if (diff > 0) {
+            for (let i = 0; i < diff; i++) {
+                nums2.unshift("0");
+            }
+        }
+        let result = [];
+        for (let i = nums1.length - 1; i >= 0; i--) {
+            let res = Number(nums1[i]) + Number(nums2[i]) + carry;
+            if (res >= 10) {
+                carry = 1
+                result.unshift((res + '')[1])
+            } else {
+                carry = 0
+                result.unshift(res)
+            }
+        }
+        if (carry) {
+            result.unshift("1");
+        }
+        return result.join('');
+    }
+
+    function foo() {
+        var num = 20;
+
+        function bar() {
+            var result = num + 20;
+
+            return result
+        }
+
+        bar()
+    }
+
+    foo()
+
+    function promiseAll(promises) {
+        return new Promise(function (resolve, reject) {
+            if (!isArray(promises)) {
+                return reject(new TypeError('arguments must be an array'));
+            }
+            let resolvedCounter = 0;
+            let promiseNum = promises.length;
+            let resolvedValues = new Array(promiseNum);
+            for (let i = 0; i < promiseNum; i++) {
+                Promise.resolve(promises[i]).then(function (value) {
+                    resolvedCounter++
+                    resolvedValues[i] = value
+                    if (resolvedCounter == promiseNum) {
+                        return resolve(resolvedValues)
+                    }
+                }, function (reason) {
+                    return reject(reason)
+                })
+            }
+        })
+    }
+
+    function myNew(fn, ...rest) {
+        let obj = Object.create(fn.prototype)
+        let ret = fn.apply(obj, rest)
+        return Object.prototype.toString.call(ret) === "[Object Object]" ? ret : obj
+    }
+
+
+    Function.prototype.myCall = function (ctx, ...rest) {
+        let context = ctx || window;
+
+        context.fn = this;
+        let result = context.fn(...rest);
+        delete context.fn
+
+        return result;
+    }
+
+    Function.prototype.myApply = function (ctx, rest) {
+        let context = ctx || window;
+
+        context.fn = this;
+        let result = context.fn(...rest);
+        delete context.fn
+
+        return result;
+    }
+
+    Function.prototype.myBind = function (ctx,...rest) {
+
+        let self = this;
+        let fNOP = function () { };
+
+        let fBound = function (...res) {
+            return self.apply(this instanceof fNOP ? this : ctx, rest.concat(res));
+        }
+
+        fNOP.prototype = this.prototype;
+        fBound.prototype = new fNOP();
+        return fBound;
+    }
+
+
+
+    var foo = {
+        value: 1
+    };
+
+    function bar(name, age) {
+        console.log(name)
+        console.log(age)
+        console.log(this.value);
+    }
+
+    bar.myCall(foo, 'kevin', 18);
+    bar.myApply(foo, ['kevinA', 20]);
+    bar.myBind(foo, 'kevinc', 19)()
+
 </script>
 
 </html>
