@@ -1,0 +1,61 @@
+<script>
+    function match(string) {
+        let state = start
+        for (let c of string) {
+            state = state(c)
+        }
+        return state === end
+    }
+
+    function start(c) {
+        if (c === 'a')
+            return fundA
+        else
+            return start
+    }
+
+    function fundA(c) {
+        if (c === 'b')
+            return fundB
+        else
+            return start(c)
+    }
+
+    function fundB(c) {
+        if (c === 'c')
+            return fundC
+        else
+            return start(c)
+    }
+
+    function fundC(c) {
+        if (c === 'a')
+            return fundA2
+        else
+            return start(c)
+    }
+
+    function fundA2(c) {
+        if (c === 'b')
+            return fundB2
+        else
+            return start(c)
+    }
+
+    function fundB2(c) {
+        if (c === 'x')
+            return end
+        else
+            return fundB(c)
+    }
+
+    function end(x) {
+        return end
+    }
+    console.log("abcabx", match("abcabx"))
+    console.log("abscabx", match("abscabx"))
+    console.log("abcabxs", match("abcabxs"))
+    console.log("sabcabx", match("sabcabx"))
+    console.log("abcaabx", match("abcaabx"))
+    console.log("abcabcabx", match("abcabcabx"))
+</script>

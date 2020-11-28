@@ -475,6 +475,24 @@
     // this指向
     // 函数柯里化
 
+    function sum(...arg) {
+        let res = 0
+        res = arg.reduce((p, c) => {
+            return p + c
+        }, res)
+        function add(...arg) {
+            res = arg.reduce((p, c) => {
+                return p + c
+            }, res)
+            return add
+        }
+
+        add.sumOf = () => {
+            return res
+        }
+        return add;
+    }
+
 </script>
 
 </html>

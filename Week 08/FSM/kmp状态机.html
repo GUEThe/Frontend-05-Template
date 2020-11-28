@@ -1,0 +1,64 @@
+<script>
+
+    const END_STATE = "End"
+
+    let stateList = []
+
+    class State {
+        constructor(ch, next) {
+            this.ch = ch
+            this.prev = 0
+            this.next = next
+        }
+        move(ch) {
+            if (ch === this.ch) {
+                return stateList[this.next]
+            }
+            if (this.ch === END_STATE)
+                return this
+            if (this.prev)
+                return stateList[this.prev].move(ch)
+            return this
+        }
+    }
+
+    function buildStateList(pattern) {
+
+        for (let i = 0; i < pattern.length; i++) {
+            stateList.push(new State(pattern[i], i + 1))
+        }
+        stateList.push(new State(END_STATE))
+
+        {
+            let i = 1, j = 0;
+            while (i < pattern.length) {
+                if (pattern[i] === pattern[j]) {
+                    ++i, ++j;
+                    stateList[i].prev = j;
+                } else {
+                    if (j > 0)
+                        j = stateList[j].prev;
+                    else
+                        ++i
+                }
+            }
+        }
+
+    }
+    buildStateList("abababx")
+
+    function match(source) {
+        let state = stateList[0]
+        for (let c of source) {
+            state = state.move(c)
+        }
+        return state.ch === END_STATE
+    }
+
+    console.log("abaababx", match("abaababx"))
+    console.log("aabababx", match("aabababx"))
+    console.log("abababxa", match("abababxa"))
+    console.log("ababaababx", match("ababaababx"))
+    console.log("ababqababababx", match("ababqababababx"))
+    console.log("abcabcabxx", match("abababxx"))
+</script>
