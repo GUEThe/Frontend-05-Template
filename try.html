@@ -1,0 +1,96 @@
+<input id="r" type="range" min=0 max=255 />
+<input id="g" type="range" min=0 max=255 />
+<input id="b" type="range" min=0 max=255 />
+<div id="color" style="display:inline-block;width: 100px;height: 100px;"></div>
+<script>
+    let callbacks = new Map()
+    let reactives = new Map()
+    let usedReactives = new Map()
+
+    let obj = {
+        r: 0,
+        g: 0,
+        b: 0
+    }
+
+    let po = reactive(obj)
+
+    effect(() => {
+        document.getElementById('r').value = po.r
+    })
+
+    effect(() => {
+        document.getElementById('g').value = po.g
+    })
+
+    effect(() => {
+        document.getElementById('b').value = po.b
+    })
+
+    effect(() => {
+        document.getElementById('color').style.backgroundColor = `rgb(${po.r},${po.g},${po.b})`
+    })
+
+    document.getElementById('r').addEventListener('input', (event) => {
+        po.r = event.target.value
+    })
+
+    document.getElementById('g').addEventListener('input', (event) => {
+        po.g = event.target.value
+    })
+
+    document.getElementById('b').addEventListener('input', (event) => {
+        po.b = event.target.value
+    })
+
+
+    function effect(callback) {
+        usedReactives = new Map();
+        callback();
+        for (let usedKey of usedReactives.keys()) {
+            if (!callbacks.has(usedKey)) {
+                callbacks.set(usedKey, new Map())
+            }
+            for (let usedProp of usedReactives.get(usedKey)) {
+                if (!callbacks.get(usedKey).has(usedProp)) {
+                    callbacks.get(usedKey).set(usedProp, [])
+                }
+                callbacks.get(usedKey).get(usedProp).push(callback)
+            }
+        }
+    }
+
+    function reactive(obj) {
+
+        if (reactives.has(obj))
+            return reactives.get(obj)
+
+        let proxy = new Proxy(obj, {
+            get(target, prop) {
+                if (!usedReactives.has(target)) {
+                    usedReactives.set(target, [])
+                }
+                if (!usedReactives.get(target).includes(prop)) {
+                    usedReactives.get(target).push(prop)
+                }
+                if (typeof target[prop] === "object")
+                    return reactive(target[prop])
+                return target[prop]
+            },
+            set(target, prop, val) {
+                target[prop] = val
+                if (callbacks.has(target))
+                    if (callbacks.get(target).has(prop))
+                        for (let callback of callbacks.get(target).get(prop)) {
+                            callback()
+                        }
+                return target[prop]
+            }
+        })
+
+        reactives.set(obj, proxy)
+
+        return proxy
+
+    }
+</script>
