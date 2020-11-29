@@ -52,3 +52,4 @@ HTTP属于应用层协议，建立在 tcp 之上。HTTP的这两种报文都由�
 ## 作业
 
 * [服务端代码](./toy-browser/server.js)
+* [客户端代码](./toy-browser/client.js)
