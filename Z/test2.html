@@ -1,3 +1,44 @@
 <script>
 
+    function foo() {
+        let name = "foo"
+        console.log(name)
+
+        function bar() {
+            let name = "bar"
+            console.log(name)
+        }
+        bar()
+    }
+
+    foo()
+
+</script>
+<script>
+    // 节流，每隔一段时间执行一次
+    function throttle(func, wait = 1000) {
+        let last = null
+
+        return function (...args) {
+            let now = + new Date()
+            if (last - now > wait || !last) {
+                func(...arg)
+                last = now
+            }
+        }
+
+    }
+
+    //防抖，一段时间内只执行一次
+    function debounce(func, wait) {
+        let timer = 0
+        return function (...args) {
+            if (timer)
+                clearTimeout(timer)
+
+            let timer = setTimeout(() => {
+                func(...args)
+            }, wait)
+        }
+    }
 </script>
