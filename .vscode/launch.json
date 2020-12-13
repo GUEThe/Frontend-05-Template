@@ -4,6 +4,7 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
 
         {
             "type": "node",
@@ -12,7 +13,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\Week 08\\toy-browser\\client.js"
+            "program": "${workspaceFolder}\\Week 09\\toy-browser\\client.js"
         },
         {
             "type": "node",
@@ -21,7 +22,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\Week 08\\toy-browser\\server.js"
+            "program": "${workspaceFolder}\\Week 09\\toy-browser\\server.js"
         }
     ]
 }

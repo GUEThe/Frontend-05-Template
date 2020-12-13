@@ -41,4 +41,30 @@
             }, wait)
         }
     }
+    let a = {
+        num: 0,
+        children: [{
+            num: 0,
+            children: [{
+                num: 0,
+                children: [{
+                    num: 1,
+                },{
+                    num: 4,
+                }]
+            }, {
+                num: 3
+            }]
+        }]
+    }
+    function sum(a) {
+        for (let i = 0; i < a.children.length; i++) {
+            if (a.children[i].children) {
+                sum(a.children[i])
+            }
+            a.num += a.children[i].num
+        }
+    }
+    sum(a)
+    console.log(a)
 </script>

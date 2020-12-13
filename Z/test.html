@@ -378,6 +378,46 @@
         })
     }
 
+    
+    function promiseAllSettled(promises) {
+        return new Promise(function (resolve, reject) {
+            if (!isArray(promises)) {
+                return reject(new TypeError('arguments must be an array'));
+            }
+            let doneCount = 0;
+            let promiseNum = promises.length;
+            let resolvedValues = new Array(promiseNum);
+            for (let i = 0; i < promiseNum; i++) {
+                Promise.resolve(promises[i]).then(function (value) {
+                    doneCount++
+                    resolvedValues[i] = value
+                    if (doneCount == promiseNum) {
+                        return resolve(resolvedValues)
+                    }
+                }, function (reason) {
+                    doneCount++
+                    resolvedValues[i] = reason
+                    if (doneCount == promiseNum) {
+                        return resolve(resolvedValues)
+                    }
+                })
+            }
+        })
+    }
+
+
+    function promiseRace(promises) {
+        new new Promise((resolve, reject) => {
+            for (let i = 0; i < promises.length; i++) {
+                Promise.resolve(promises[i]).then((data) => {
+                    resolve(data);
+                }).catch((reason) => {
+                    reject(reason);
+                })
+            }
+        })
+    }
+
     function myNew(fn, ...rest) {
         let obj = Object.create(fn.prototype)
         let ret = fn.apply(obj, rest)
@@ -456,21 +496,6 @@
 
     cat.say()
 
-    function sum(...rest) {
-        let res = 0
-
-        res = rest.reduce((per, cur) => { return per + cur }, 0)
-        this.sumOf = () => {
-            return res
-        }
-
-        return function (...rest) {
-            res = rest.reduce((per, cur) => { return per + cur }, res)
-            this.sumOf = () => {
-                return res
-            }
-        }
-    }
 
     // this指向
     // 函数柯里化
