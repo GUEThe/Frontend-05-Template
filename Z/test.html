@@ -5,10 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .container{
+            background-color: black;
+        }
+        .float{
+            float: left;
+            width: 200px;
+            height: 200px;
+            background-color: red;
+        }
+        .container::after{
+            content: " ";
+            clear: both;
+            display: block;
+            visibility: hidden;
+        }
+    </style>
 </head>
 
 <body>
     <button onclick="onBtn()">sss</button>
+    <div class="container">
+        <div class="float"></div>
+
+    </div>
 </body>
 <script>
     function TreeNode(val) {

@@ -65,7 +65,7 @@
 
 1. 原理  
 
-    使用 mousedown、mousemove 和 mouseup 组合，在需要拖动的块上监听 mousedown 事件，触发 mousedown 之后在 document 上监听 mousemove 和 mouseup 事件，mousemove 时移动滑块，mouseup 时保存上一次的未知同时取消 document 上对 mousemove 和 mouseup 事件的监听。 鼠标拖动时计算鼠标移动的距离与滑块上一次位置的距离之和，即为滑块滑动到的位置。鼠标移动的距离可通过 mousedown 时的位置和 mousemove 之后的位置计算。
+    使用 mousedown、mousemove 和 mouseup 组合，在需要拖动的块上监听 mousedown 事件，触发 mousedown 之后在 document 上监听 mousemove 和 mouseup 事件，mousemove 时移动滑块，mouseup 时保存上一次的位置的同时取消 document 上对 mousemove 和 mouseup 事件的监听。 鼠标拖动时计算鼠标移动的距离与滑块上一次位置的距离之和，即为滑块滑动到的位置。鼠标移动的距离可通过 mousedown 时的位置和 mousemove 之后的位置计算。
 
     这样做才是正确的做法，利用 flag 标志，然后在需要滑动的块上监听 mousemove 和 mouseup 存在 bug，当鼠标拖动太快需要滑动的块会监听不到 mousemove，当鼠标拖到浏览器窗口外松开时滑块也会监听不到 mouseup。
 

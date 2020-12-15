@@ -1,3 +1,24 @@
+<body>
+    <ul>
+        <!-- 定义路由 -->
+        <li><a href="#/home">home</a></li>
+        <li><a href="#/about">about</a></li>
+
+        <!-- 渲染路由对应的 UI -->
+        <div id="routeView"></div>
+    </ul>
+
+    <ul>
+        <!-- 定义路由 -->
+        <li><a href="/home" class="history">home</a></li>
+        <li><a href="/about" class="history">about</a></li>
+
+        <!-- 渲染路由对应的 UI -->
+        <div id="routeView"></div>
+    </ul>
+</body>
+
+
 <script>
 
     function foo() {
@@ -49,7 +70,7 @@
                 num: 0,
                 children: [{
                     num: 1,
-                },{
+                }, {
                     num: 4,
                 }]
             }, {
@@ -67,4 +88,86 @@
     }
     sum(a)
     console.log(a)
+</script>
+
+<script>
+    function request(req) {
+        return new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest()
+            xhr.open(req.method, req.rul)
+            xhr.send()
+            xhr.onreadystatechange = (event) => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    resolve(xhr.response)
+                } else if (xhr.readyState === 4) {
+                    reject(xhr.response)
+                }
+            }
+        })
+    }
+</script>
+
+<script>
+    let routeView = document.getElementById("routeView")
+    window.addEventListener("hashchange", onHashchange)
+    function onHashchange() {
+        switch (location.hash) {
+            case '#/home':
+                routeView.innerHTML = "home"
+                break;
+            case '#/about':
+                routeView.innerHTML = "about"
+                break;
+        }
+    }
+
+    let his = document.getElementsByClassName("history")
+
+
+    for (const element of his) {
+        element.addEventListener("click", router)
+    }
+
+    function router(e) {
+        e.preventDefault();
+        history.pushState(null, '', e.target.getAttribute('href'));
+        onPopstate()
+    }
+
+    window.addEventListener("popstate", onPopstate)
+
+    function onPopstate() {
+        switch (location.pathname) {
+            case '/home':
+                routeView.innerHTML = "home"
+                break;
+            case '/about':
+                routeView.innerHTML = "about"
+                break;
+        }
+    }
+</script>
+
+<script>
+    class EventBus{
+        constructor(){
+            this.eventMap = new Map()
+        }
+
+        emit(event){
+            if(typeof this.eventMap.get(event) ==="function"){
+                this.eventMap.get(event)()
+            }
+        }
+
+        on(event,handler){
+            if(typeof handler==="function"){
+                this.eventMap.set(event,handler)
+            }
+        }
+    }
+    const eventBus = new EventBus()
+    eventBus.on("test",()=>{
+        console.log("test")
+    })
 </script>
