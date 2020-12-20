@@ -7,6 +7,7 @@
             <p></p>
 
         </div>
+        <p id="pAfterDiv"></p>
     </div>
 </body>
 <script>
@@ -24,8 +25,10 @@
         let reverseSelector = selector.split('').reverse().join('')
         let token = ''
         let curElement = element
-        let findParent = false //用于标志是否向祖宗元素做匹配
+        let findAncestor = false //用于标志是否向祖宗元素做匹配
         let findOlder = false //用于标志是否向兄长元素做匹配（有相同的父元素，但是在目标元素之前）
+        let findParent = false//用于标志是否向父元素做匹配
+        let findAdjacentSibling = false
 
         //判断id和class选择器
         function simpleMatch(char, token, element) {
@@ -44,7 +47,7 @@
                     token = ''
                     continue
                 }
-                if (findParent) {
+                if (findAncestor) {
                     let match = false
                     while (curElement) {
                         match = simpleMatch(char, token, curElement)
@@ -54,7 +57,7 @@
                         curElement = curElement.parentNode
                     }
                     if (match) {
-                        findParent = false;
+                        findAncestor = false;
                         continue;
                     }
                 }
@@ -62,7 +65,7 @@
                 if (findOlder) {
                     let match = false
                     if (curElement) {
-                        for (let child of curElement.childNodes) {
+                        for (let child of curElement.children) {
                             match = simpleMatch(char, token, child)
                             if (match) {
                                 break;
@@ -85,7 +88,7 @@
                 if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
                     token = ''
                     curElement = curElement.parentNode
-                    findParent = true
+                    findAncestor = true
                     continue;
                 }
                 if (token) {
@@ -100,6 +103,7 @@
                 if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
                     token = ''
                     curElement = curElement.parentNode
+                    findParent = true
                     continue;
                 }
                 if (token) {
@@ -114,9 +118,9 @@
                 if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
                     token = ''
                     if (curElement.parentNode) {
-                        for (let i = 0; i < curElement.parentNode.childNodes.length; i++) {
-                            if (curElement.parentNode.childNodes[i] === curElement) {
-                                curElement = curElement.parentNode.childNodes[i - 1] || {}
+                        for (let i = 0; i < curElement.parentNode.children.length; i++) {
+                            if (curElement.parentNode.children[i] === curElement) {
+                                curElement = curElement.parentNode.children[i - 1] || {}
                                 break;
                             }
                         }
@@ -127,9 +131,9 @@
                     return false
                 } else {
                     if (curElement.parentNode) {
-                        for (let i = 0; i < curElement.parentNode.childNodes.length; i++) {
-                            if (curElement.parentNode.childNodes[i] === curElement) {
-                                curElement = curElement.parentNode.childNodes[i - 1] || {}
+                        for (let i = 0; i < curElement.parentNode.children.length; i++) {
+                            if (curElement.parentNode.children[i] === curElement) {
+                                curElement = curElement.parentNode.children[i - 1] || {}
                                 break;
                             }
                         }
@@ -156,7 +160,28 @@
             token = char + token
         }
         if (token) {
-            return token.toLowerCase() === curElement.tagName.toLowerCase()
+            if (findAncestor) {
+                while (curElement) {
+                    if (token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                        return true
+                    }
+                    curElement = curElement.parentNode
+                }
+                return false
+            }
+            if (findOlder && curElement) {
+
+                for (let child of curElement.children) {
+                    if (token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                        return true
+                    }
+                }
+
+            }
+            if(findParent){
+                return token.toLowerCase() === curElement.tagName.toLowerCase()
+            }
+            return false
         }
         return true;
     }
@@ -167,7 +192,34 @@
     console.log(match(".class .p", document.getElementById("p")))
     console.log(match(".class #p", document.getElementById("p")))
     console.log(match("body p", document.getElementById("p")))
+    console.log(match("div>p", document.getElementById("p")))
+    console.log(match("#id.class>p", document.getElementById("p")))
+    console.log(match("#id.class+p", document.getElementById("pAfterDiv")))
+    console.log(match("div+p", document.getElementById("pAfterDiv")))
 
+
+
+    "div#a.b .c[id=x]"="div"+"#a"+'.b'+'.c'+'[id=x]'
+    "div"=[0,0,0,1]
+    "#a"=[0,1,0,0]
+    ".b"=".c"="[id=x]"=[0,0,1,0]
+    "div#a.b .c[id=x]"=[0,1,3,1]
+     
+    "#a:not(#b)"="#a"+"#b"
+    "#a"="#b"=[0,1,0,0]
+    "#a:not(#b)"=[0,2,0,0]
+
+
+    "*.a"="*"+".a"
+    "*"=[0,0,0,0]
+    ".a"=[0,0,1,0]
+    "*.a"=[0,0,1,0]
+    
+    "div.a"="div"+".a"
+    
+    "div" = [0,0,0,1]
+    ".a"=[0,0,1,0]
+    "div.a" = [0,0,1,1]
 
 
 
