@@ -1,0 +1,174 @@
+<body>
+    <div>
+        <div id="id" class="class">
+            <p class="p" id="p"></p>
+            <p></p>
+
+            <p></p>
+
+        </div>
+    </div>
+</body>
+<script>
+    // 从右向左匹配
+    function match(selector, element) {
+
+        // 特例
+        if (selector === "*") {
+            return true
+        }
+        if (selector.toLowerCase() === element.tagName.toLowerCase()) {
+            return true
+        }
+
+        let reverseSelector = selector.split('').reverse().join('')
+        let token = ''
+        let curElement = element
+        let findParent = false //用于标志是否向祖宗元素做匹配
+        let findOlder = false //用于标志是否向兄长元素做匹配（有相同的父元素，但是在目标元素之前）
+
+        //判断id和class选择器
+        function simpleMatch(char, token, element) {
+            if (char === "#") {
+                return token === curElement.id
+            }
+            if (char === ".") {
+                return curElement.className.includes(token)
+            }
+            return false
+        }
+
+        for (let char of reverseSelector) {
+            if (char === "#" || char === ".") {
+                if (simpleMatch(char, token, curElement)) {
+                    token = ''
+                    continue
+                }
+                if (findParent) {
+                    let match = false
+                    while (curElement) {
+                        match = simpleMatch(char, token, curElement)
+                        if (match) {
+                            break;
+                        }
+                        curElement = curElement.parentNode
+                    }
+                    if (match) {
+                        findParent = false;
+                        continue;
+                    }
+                }
+
+                if (findOlder) {
+                    let match = false
+                    if (curElement) {
+                        for (let child of curElement.childNodes) {
+                            match = simpleMatch(char, token, child)
+                            if (match) {
+                                break;
+                            }
+                        }
+                    }
+
+
+                    if (match) {
+                        findOlder = false
+                        continue
+                    }
+                }
+
+
+                return false
+            }
+
+            if (char === " ") {
+                if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                    token = ''
+                    curElement = curElement.parentNode
+                    findParent = true
+                    continue;
+                }
+                if (token) {
+                    return false
+                } else {
+                    curElement = curElement.parentNode
+                    continue
+                }
+            }
+
+            if (char === ">") {
+                if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                    token = ''
+                    curElement = curElement.parentNode
+                    continue;
+                }
+                if (token) {
+                    return false
+                } else {
+                    curElement = curElement.parentNode
+                    continue
+                }
+            }
+
+            if (char === "+") {
+                if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                    token = ''
+                    if (curElement.parentNode) {
+                        for (let i = 0; i < curElement.parentNode.childNodes.length; i++) {
+                            if (curElement.parentNode.childNodes[i] === curElement) {
+                                curElement = curElement.parentNode.childNodes[i - 1] || {}
+                                break;
+                            }
+                        }
+                    }
+                    continue;
+                }
+                if (token) {
+                    return false
+                } else {
+                    if (curElement.parentNode) {
+                        for (let i = 0; i < curElement.parentNode.childNodes.length; i++) {
+                            if (curElement.parentNode.childNodes[i] === curElement) {
+                                curElement = curElement.parentNode.childNodes[i - 1] || {}
+                                break;
+                            }
+                        }
+                    }
+                    continue
+                }
+            }
+
+            if (char === "~") {
+                if (token && token.toLowerCase() === curElement.tagName.toLowerCase()) {
+                    token = ''
+                    findOlder = true
+                    curElement = curElement.parentNode
+                    continue;
+                }
+                if (token) {
+                    return false
+                } else {
+                    curElement = curElement.parentNode
+                    continue
+                }
+            }
+
+            token = char + token
+        }
+        if (token) {
+            return token.toLowerCase() === curElement.tagName.toLowerCase()
+        }
+        return true;
+    }
+
+    console.log(match(".class", document.getElementById("id")))
+    console.log(match("#id", document.getElementById("id")))
+    console.log(match(".class p", document.getElementById("p")))
+    console.log(match(".class .p", document.getElementById("p")))
+    console.log(match(".class #p", document.getElementById("p")))
+    console.log(match("body p", document.getElementById("p")))
+
+
+
+
+</script>
