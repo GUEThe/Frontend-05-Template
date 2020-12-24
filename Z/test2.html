@@ -149,25 +149,38 @@
 </script>
 
 <script>
-    class EventBus{
-        constructor(){
+    class EventBus {
+        constructor() {
             this.eventMap = new Map()
         }
 
-        emit(event){
-            if(typeof this.eventMap.get(event) ==="function"){
+        emit(event) {
+            if (typeof this.eventMap.get(event) === "function") {
                 this.eventMap.get(event)()
             }
         }
 
-        on(event,handler){
-            if(typeof handler==="function"){
-                this.eventMap.set(event,handler)
+        on(event, handler) {
+            if (typeof handler === "function") {
+                this.eventMap.set(event, handler)
             }
         }
     }
     const eventBus = new EventBus()
-    eventBus.on("test",()=>{
+    eventBus.on("test", () => {
         console.log("test")
     })
+</script>
+
+<script>
+    var wt = "windows"
+    let ttt = {
+        wt: "ttt",
+        b: function () {
+            console.log(this.wt)
+        },
+        c: () => {
+            console.log(this.wt)
+        }
+    }
 </script>
