@@ -1,0 +1,25 @@
+<script>
+    console.log("start script")
+
+    async function async1(){
+        await async2()
+        console.log("async1")
+    }
+
+    async function async2(){
+        await 2
+        console.log("async2")
+    }
+
+    async1()
+
+    setTimeout(()=>{
+        console.log('setTimeout')
+    },0)
+
+    Promise.resolve(1).then((value)=>{
+        console.log("Promise")
+    })
+
+    console.log("end script")
+</script>
